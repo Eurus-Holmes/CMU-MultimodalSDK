@@ -1,25 +1,29 @@
-Please participate in the CMU Multimodal SDK user survey for a chance to win a $25 Amazon gift card in a raffle. Your opinion is very important to us :). The deadline for participating is January 5th 2019. https://goo.gl/forms/VBQdMqNZEIsccQpB2 
+Please participate in the CMU Multimodal SDK user survey for a chance to win a $25 Amazon gift card in a raffle. Your opinion is very important to us :). The deadline for participating is January 15th 2019 (deadline extended). https://goo.gl/forms/VBQdMqNZEIsccQpB2 
 
 # CMU-Multimodal SDK Version 1.0.3 (mmsdk)
 
-CMU-Multimodal SDK provides tools to easily load well-known multimodal datasets and rapidly build neural multimodal deep models. Hence the SDK comprises of two modules: 1) mmdatasdk: module for downloading and procesing multimodal datasets using computational sequences. 2) mmmodelsdk: tools to utilize complex neural models as well as layers for building new models (release Jan 1 2019). The fusion models in prior papers will be released here. 
+CMU-Multimodal SDK provides tools to easily load well-known multimodal datasets and rapidly build neural multimodal deep models. Hence the SDK comprises of two modules: 1) mmdatasdk: module for downloading and procesing multimodal datasets using computational sequences. 2) mmmodelsdk: tools to utilize complex neural models as well as layers for building new models. The fusion models in prior papers will be released here. 
 
 # News
 
---> **BERT embeddings now available for CMU-MOSI.** 
+--> Alignment function on large datasets improved ~40x in speed. CMU-MOSEI now aligns in less than 4 hours. Previously the full dataset took around 2-3 days to fully align, majority of which was spent on alignment function.
 
-Some examples are released to clarify confusions about downloading and aligning datasets.
+--> Have a look at the newly released RAVEN model: https://github.com/victorywys/RAVEN - https://arxiv.org/pdf/1811.09362.pdf 
 
-**Raw data now available for download outside SDK**. You can download the raw data as well. I strongly recommend sticking to SDK for running machine learning studies. If you want to extract your own features you can create computational sequences and share them with us and others. All raw data can be downloaded from http://immortal.multicomp.cs.cmu.edu/raw_datasets/. 
+--> **mmmodelsdk is now released. Most of our fusion approaches are available under this new mmsdk module.**
 
-Update: POM Dataset Added (version 1.0.3 announced). As the next step, we will add more tutorials and add functionalities for passive alignment. 
+I am currently working on implementing some examples for mmmodelsdk fusion approaches under pytorch. Please be patient since I have to move the code from theano to pytorch :). In the meantime, if you need to recreate any of our previous model's performance urgently, we have the implementation of memory fusion, tensor fusion and tensor approximation in related_repos folder. 
+
+BERT embeddings now available for CMU-MOSI.
+
+**Raw data now available for download outside SDK - download from http://immortal.multicomp.cs.cmu.edu/raw_datasets/**. 
 
 **To see what our next steps are for the SDK please look at next_steps.md**
 
 
 ## CMU Multimodal Data SDK (mmdatasdk)
 
-CMU-Multimodal Data SDK simplifies downloading nad loading multimodal datasets. The module mmdatasdk treats each multimodal dataset as a combination of **computational sequences**. Each computational sequence contains information from one modality in a heirarchical format, defined in the continuation of this section. Computational sequences are self-contained and independent; they can be used to train models in isolation. They can be downloaded, shared and registered with our trust servers. This allows the community to share data and recreate results in a more elegant way using computational sequence intrgrity checks. Furthermore, this integrity check allows users to download the correct computational sequences. 
+CMU-Multimodal Data SDK simplifies downloading and loading multimodal datasets. The module mmdatasdk treats each multimodal dataset as a combination of **computational sequences**. Each computational sequence contains information from one modality in a heirarchical format, defined in the continuation of this section. Computational sequences are self-contained and independent; they can be used to train models in isolation. They can be downloaded, shared and registered with our trust servers. This allows the community to share data and recreate results in a more elegant way using computational sequence intrgrity checks. Furthermore, this integrity check allows users to download the correct computational sequences. 
 
 Each computational sequence is a heirarchical data strcuture which contains two key elements 1) "data" is a heirarchy of features in the computational sequence categorized based on unique multimodal source identifier (for example video id). Each multimodal source has two matrices associated with it: features and intervals. Features denote the computational descriptors and intervals denote their associated timestamp. Both features and intervals are numpy 2d arrays. 2) "metadata": contains information about the computational sequence including integrity and version information. The computational sequences are stored as hdf5 objects on hard disk with ".csd" extension (computational sequential data). Both the data and metadata are stored under "root name" (root of the heirarchy)
 
