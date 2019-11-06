@@ -15,15 +15,13 @@ def myavg(intervals,features):
 #Downloading the dataset
 cmumosi_highlevel=mmdatasdk.mmdataset(mmdatasdk.cmu_mosi.highlevel,'cmumosi/')
 
-
-
 #some random video from cmumosi_highlevel
 #==>some_video=list(cmumosi_highlevel["glove_vectors"].data.keys())[0]
 
 
 #Aligning to the words to get word-level alignments
 cmumosi_highlevel.align('glove_vectors',collapse_functions=[myavg])
-
+cmumosi_highlevel.impute('glove_vectors')
 
 
 #get the intervals and features accompanying the 100th word in the some_video
@@ -36,6 +34,7 @@ cmumosi_highlevel.align('glove_vectors',collapse_functions=[myavg])
 
 
 #Aligning to the computational labels, thus removing the unsupervised components of CMU-MOSI
+
 cmumosi_highlevel.add_computational_sequences(mmdatasdk.cmu_mosi.labels,'cmumosi/')
 cmumosi_highlevel.align('Opinion Segment Labels')
 

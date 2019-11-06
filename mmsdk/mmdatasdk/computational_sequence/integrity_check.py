@@ -19,7 +19,7 @@ def validateDataIntegrity(data,rootName,which=True):
 				if which: log.error("Video <%s> in  <%s> computational sequence has wrong intervals array shape. "%(vid,rootName),error=False)
 				failure=True
 			#check the features next
-			if len(data[vid]["features"].shape) != 2 :
+			if len(data[vid]["features"].shape) < 2 :
 				if which: log.error("Video <%s> in  <%s> computational sequence has wrong features array shape. "%(vid,rootName),error=False)
 				failure=True
 			#if the first dimension of intervals and features doesn't match
@@ -58,7 +58,7 @@ def validateMetadataIntegrity(metadata,rootName,which=True):
 		failure=True
 		#if failed before
 	if failure:
-		log.error(msgstring="<%s> computational sequence does not have all the required metadata ..."%rootName,error=True)
+		log.error(msgstring="<%s> computational sequence does not have all the required metadata ... continuing "%rootName,error=False)
 	else:
 		log.success("<%s> computational sequence metadata in correct format"%rootName)
 	return True
