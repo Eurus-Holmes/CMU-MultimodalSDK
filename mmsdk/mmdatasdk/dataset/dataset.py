@@ -270,6 +270,94 @@ class mmdataset:
 				filename+='.csd'
 			self.computational_sequences[seq_key].deploy(os.path.join(destination,filename))
 
+	def sort(self,sort_function=sorted):
+		""" Sorts the computational sequence data based on the start time in intervals 
+
+		#Arguments
+			self: The dataset object.
+			sort_function: The function passed for sorting. This function will receive the intervals one by one for each key 
+
+		#Returns
+			Does not return any values - replaces in place
+
+		"""
+
+
+		for key in list(self.keys()):
+			for csd in list(self[key].keys()):
+				this_intervals_np=numpy.array(self[key][csd]["intervals"])
+				this_features_np=numpy.array(self[key][csd]["features"])
+				sorted_indices=sort_function(range(this_intervals_np.shape[0]),key=lambda x: this_intervals_np[x,0])
+				sorted_this_intervals_np=this_intervals_np[sorted_indices,:]
+				sorted_this_features_np=this_features_np[sorted_indices,:]
+				self[key][csd]["intervals"]=sorted_this_intervals_np
+				self[key][csd]["features"]=sorted_this_features_np
+
+	#TODO: Add folds to this function
+	def get_tensors(self,seq_len,non_sequences=[],direction=False,folds=None):
+		""" Returns trainable tensor from computational sequence data
+
+		#Arguments
+			self: The dataset object.
+			seq_len: The maximum sequence length for the computational sequence entries, e.g. sentence length in words.
+			direction: True for right padding and False for left padding.
+			folds: The folds in which the dataset should be split.
+		#Returns
+			Dictionary of numpy arrays with the same data type as computational sequences. Dictionaries include the same keys as the dataset
+
+		"""
+
+		data=[]
+		output=[]
+
+		
+		for i in range (len(folds)):
+			data.append({})
+			output.append({})
+		
+
+		csds=list(self.keys())
+		self.hard_unify()
+		
+		
+		def lpad(this_array,direction):
+			if direction==False:
+				temp_array=numpy.concatenate([numpy.zeros([seq_len]+list(this_array.shape[1:])),this_array],axis=0)[-seq_len:,...]
+			else:
+				temp_array=numpy.concatenate([this_array,numpy.zeros([seq_len]+list(this_array.shape[1:]))],axis=0)[:seq_len,...]
+			return temp_array
+
+		def detect_entry_fold(entry,folds):
+			entry_id=entry.split("[")[0]
+			for i in range(len(folds)):
+				if entry_id in folds[i]: return i
+			return None
+			
+
+		if len(csds)==0:
+			log.error("Dataset is empty, cannot get tensors. Exiting ...!",error=True)
+
+		for i in range (len(folds)):
+			for csd in csds:
+				data[i][csd]=[]
+
+		for key in list(self[csds[0]].keys()):
+			which_fold=detect_entry_fold(key,folds)
+			if which_fold==None:
+				log.error("Key %s doesn't belong to any fold ... "%str(key),error=False)
+			for csd in list(self.keys()):
+				this_array=self[csd][key]["features"]
+				if csd in non_sequences:
+					data[which_fold][csd].append(this_array)
+				else:
+					data[which_fold][csd].append(lpad(this_array,direction))
+
+		for i in range(len(folds)):
+			for csd in csds:
+				output[i][csd]=numpy.array(data[i][csd])
+
+		return output
+
 	def __intersect_and_copy(self,ref,relevant_entry,epsilon):
 
 		sub=relevant_entry["intervals"]
